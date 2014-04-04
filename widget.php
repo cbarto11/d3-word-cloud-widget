@@ -70,6 +70,7 @@ class D3_WordCloud_Widget extends WP_Widget
 
 		<?php //D3_WordCloud_Widget::$id++; ?>
 
+		<input type="hidden" class="orientation" value="<?php echo esc_attr($orientation); ?>" />
 		<input type="hidden" class="font-family" value="<?php echo esc_attr($font_family); ?>" />
 		
 		<?php 
@@ -112,7 +113,7 @@ class D3_WordCloud_Widget extends WP_Widget
 		<input type="hidden" class="tags" value="<?php echo esc_attr(json_encode($tags)); ?>" />
 		
 		<svg width="<?php echo $canvas_size['width']; ?>" height="<?php echo $canvas_size['height']; ?>"></svg>
-
+		
 		</div>
 
 		<?php echo $args['after_widget']; ?>
@@ -170,6 +171,25 @@ class D3_WordCloud_Widget extends WP_Widget
 		</p>
 
 		<p>
+		<label for="<?php echo $this->get_field_id( 'orientation' ); ?>"><?php _e( 'Words Orientation:' ); ?></label> 
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'orientation' ); ?>" value="horizontal" <?php echo ( $orientation == "horizontal" ? 'checked' : '' ); ?> />
+		Horizontal
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'orientation' ); ?>" value="vertical" <?php echo ( $orientation == "vertical" ? 'checked' : '' ); ?> />
+		Vertical
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'orientation' ); ?>" value="mixed" <?php echo ( $orientation == "mixed" ? 'checked' : '' ); ?> />
+		Mixed Horizontal and Vertical
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'orientation' ); ?>" value="mostly-horizontal" <?php echo ( $orientation == "mostly-horizontal" ? 'checked' : '' ); ?> />
+		Mostly Horizontal
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'orientation' ); ?>" value="mostly-vertical" <?php echo ( $orientation == "mostly-vertical" ? 'checked' : '' ); ?> />
+		Mostly Vertical
+		</p>
+
+		<p>
 		<label for="<?php echo $this->get_field_id( 'font-family' ); ?>"><?php _e( 'Font Family:' ); ?></label> 
 		<br/>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'font-family' ); ?>" name="<?php echo $this->get_field_name( 'font-family' ); ?>" type="text" value="<?php echo esc_attr( $font_family ); ?>">
@@ -191,10 +211,10 @@ class D3_WordCloud_Widget extends WP_Widget
 		</p>		
 
 		<p>
-		<label for="<?php echo $this->get_field_id( 'font-size' ); ?>"><?php _e( 'Font Size:' ); ?></label> 
+		<label for="<?php echo $this->get_field_id( 'font-size' ); ?>"><?php _e( 'Font Color:' ); ?></label> 
 		<br/>
 		<input type="radio" name="<?php echo $this->get_field_name( 'font-color-type' ); ?>" value="none" <?php echo ( $font_color_type == "none" ? 'checked' : '' ); ?> />
-		None:
+		None
 		<br/>
 		<input type="radio" name="<?php echo $this->get_field_name( 'font-color-type' ); ?>" value="single" <?php echo ( $font_color_type == "single" ? 'checked' : '' ); ?> />
 		Single:
@@ -257,6 +277,9 @@ class D3_WordCloud_Widget extends WP_Widget
 		// max words (# or none)
 		$options['maximum_words'] = ( isset($instance['maximum-words']) ? $instance['maximum-words'] : 250 );
 		
+		// words orientation
+		$options['orientation'] = ( isset($instance['orientation']) ? $instance['orientation'] : 'horizontal' );
+
 		// font-family
 		$options['font_family'] = ( isset($instance['font-family']) ? $instance['font-family'] : 'Arial' );
 

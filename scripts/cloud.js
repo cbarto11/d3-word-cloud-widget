@@ -93,15 +93,46 @@ function d3_word_cloud( div )
 
 		var layout = d3.layout.cloud()
 			.timeInterval( 10 )
-			.rotate( 0 )
-			//.rotate( function() { return Math.round(Math.random()) * 90; } )
-			//.rotate( function() { return Math.round(Math.random() * 4) * 45; } )
 			.spiral( 'rectangular' )
 			.size( canvas_size )
 			.font( font_family )
 			.fontSize( function(d) { return font_size(+d.count); } )
 			.text( function(d) { return d.name; } )
 			.on( 'end', self.draw );
+
+		var orientation = unescape( d3.select(self.id+' .orientation').attr('value') );
+		if( orientation == 'random' )
+		{
+			var r = Math.round(Math.random() * 4);
+			var o = [ 'horizontal', 'vertical', 'mixed', 'mostly-horizontal', 'mostly-vertical' ];
+			orientation = o[r];
+		}
+		switch( orientation )
+		{
+			case( 'horizontal' ): layout.rotate( 0 ); break;
+			case( 'vertical' ): layout.rotate( 270 ); break;
+			case( 'mixed' ): layout.rotate( function() { return Math.round(Math.random()) * 270; } ); break;
+			case( 'mostly-horizontal' ): 
+				layout.rotate(
+					function()
+					{
+						var r = Math.round(Math.random() * 2);
+						if( r > 1 ) return 270;
+						return 0;
+					});
+				break;
+			case( 'mostly-vertical' ):
+				layout.rotate(
+					function()
+					{
+						var r = Math.round(Math.random() * 2);
+						if( r > 1 ) return 0;
+						return 270;
+					});
+				break;
+			default: layout.rotate( 0 ); break;
+		}
+		//layout.rotate( function() { return Math.round(Math.random() * 4) * 45; } )
 
 		var background = canvas.append( 'g' );
 		var vis = canvas.append( 'g' )
