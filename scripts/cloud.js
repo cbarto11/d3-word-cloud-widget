@@ -87,7 +87,9 @@ function d3_word_cloud( div )
 		tags = JSON.parse( tags );
 
 		var canvas = d3.select(self.id+' svg');
-		canvas_size = [ +canvas.attr('width'), +canvas.attr('height') ];
+		var width = d3.select(self.id+' svg').style("width").replace('px', '');
+		var height = d3.select(self.id+' svg').style("height").replace('px', '');
+		canvas_size = [ +width, +height ];
 
 		var layout = d3.layout.cloud()
 			.timeInterval( 10 )
