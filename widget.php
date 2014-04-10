@@ -40,20 +40,19 @@ class D3_WordCloud_Widget extends WP_Widget
 		$terms = get_terms( $taxonomies, 
 			array( 
 				'orderby' => 'count', 
-				'order' => 'ASC', 
-				'hide_empty' => 1, 
-				'number' => +maximum_words
+				'order' => 'DESC', 
+				'number' => intval($maximum_words),
 			)
 		);
 		
 		$tags = array();
 		foreach( $terms as $term )
 		{
-			if( +$term->count > +$minimum_count )
+			if( $term->count >= intval($minimum_count) )
 			{
 				$tags[] = array(
 					'name' => $term->name,
-					'count' => +$term->count,
+					'count' => $term->count,
 					'url' => get_term_link( $term ),
 				);
 			}
@@ -69,7 +68,7 @@ class D3_WordCloud_Widget extends WP_Widget
 		<div id="<?php echo $this->id; ?>" class="d3-word-cloud-container">
 
 		<?php //D3_WordCloud_Widget::$id++; ?>
-
+		
 		<input type="hidden" class="orientation" value="<?php echo esc_attr($orientation); ?>" />
 		<input type="hidden" class="font-family" value="<?php echo esc_attr($font_family); ?>" />
 		
