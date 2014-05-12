@@ -36,87 +36,12 @@ class D3_WordCloud_Widget extends WP_Widget
 	 */
 	public function widget( $args, $instance )
 	{
-		extract( $this->get_instance_variables($instance) );
-		$terms = get_terms( $taxonomies, 
-			array( 
-				'orderby' => 'count', 
-				'order' => 'DESC', 
-				'number' => intval($maximum_words),
-			)
-		);
-		
-		$tags = array();
-		foreach( $terms as $term )
-		{
-			if( $term->count >= intval($minimum_count) )
-			{
-				$tags[] = array(
-					'name' => $term->name,
-					'count' => $term->count,
-					'url' => get_term_link( $term ),
-				);
-			}
-		}
-		?>
-		
-		<?php echo $args['before_widget']; ?>
+		$options = $this->get_instance_variables($instance);
+		$options['title'] = ( !empty($options['title']) ? $args['before_title'].$options['title'].$args['after_title'] : '' );
 
-		<?php if( !empty($instance['title']) ): ?>
-			<?php echo $args['before_title'].$instance['title'].$args['after_title']; ?>
-		<?php endif; ?>
-
-		<div id="<?php echo $this->id; ?>" class="d3-word-cloud-container">
-
-		<?php //D3_WordCloud_Widget::$id++; ?>
-		
-		<input type="hidden" class="orientation" value="<?php echo esc_attr($orientation); ?>" />
-		<input type="hidden" class="font-family" value="<?php echo esc_attr($font_family); ?>" />
-		
-		<?php 
-		$font_size = '';
-		switch( $font_size_type )
-		{
-			case( "range" ):
-				$font_size = $font_size_range['start'].','.$font_size_range['end'];
-				break;
-				
-			case( "single" ):
-			default:
-				$font_size = $font_size_single;
-				break;
-			
-		}
-		?>
-		<input type="hidden" class="font-size" value="<?php echo esc_attr($font_size); ?>" />
-		
-		<?php
-		$font_color = '';
-		switch( $font_color_type )
-		{
-			case( "spanning" ):
-				$font_color = $font_color_spanning;
-				break;
-				
-			case( "single" ):
-				$font_color = $font_color_single;
-				break;
-				
-			case( "none" ):
-			default:
-				$font_color = 'black';
-				break;
-		}
-		?>
-		<input type="hidden" class="font-color" value="<?php echo esc_attr($font_color); ?>" />
-
-		<input type="hidden" class="tags" value="<?php echo esc_attr(json_encode($tags)); ?>" />
-		
-		<svg width="<?php echo $canvas_size['width']; ?>" height="<?php echo $canvas_size['height']; ?>"></svg>
-		
-		</div>
-
-		<?php echo $args['after_widget']; ?>
-		<?php
+		echo $args['before_widget'];
+		D3_WordCloud::create_word_cloud( $this->id, $options );
+		echo $args['after_widget'];
 	}
 
 
@@ -255,45 +180,12 @@ class D3_WordCloud_Widget extends WP_Widget
 	 */
 	private function get_instance_variables( $instance )
 	{
-		$options = array();
+		$options = D3_WordCloud::get_defaults();
 		
-		// title
-		$options['title'] = ( isset($instance['title']) ? $instance['title'] : '' );
-			
-		// post types
-		$options['all_post_types'] = get_post_types( array(), 'objects' );
-		$options['exclude_post_types'] = array( 'attachment', 'revision', 'nav_menu_item' );
-		$options['post_types'] = ( isset($instance['post-types']) ? $instance['post-types'] : array('post') );
-
-		// taxonomy types
-		$options['all_taxonomies'] = get_taxonomies( array(), 'objects' );
-		$options['exclude_taxonomies'] = array( 'nav_menu', 'link_category', 'post_format' );
-		$options['taxonomies'] = ( isset($instance['taxonomies']) ? $instance['taxonomies'] : array('post_tag') );
-
-		// minimum count
-		$options['minimum_count'] = ( isset($instance['minimum-count']) ? $instance['minimum-count'] : 1 );
-
-		// max words (# or none)
-		$options['maximum_words'] = ( isset($instance['maximum-words']) ? $instance['maximum-words'] : 250 );
-		
-		// words orientation
-		$options['orientation'] = ( isset($instance['orientation']) ? $instance['orientation'] : 'horizontal' );
-
-		// font-family
-		$options['font_family'] = ( isset($instance['font-family']) ? $instance['font-family'] : 'Arial' );
-
-		// font-size (range or single)
-		$options['font_size_type'] = ( isset($instance['font-size-type']) ? $instance['font-size-type'] : 'range' );
-		$options['font_size_range'] = ( isset($instance['font-size-range']) ?  $instance['font-size-range'] : array('start' => 10, 'end' => 100) );
-		$options['font_size_single'] = ( isset($instance['font-size-single']) ? $instance['font-size-single'] : 60 );
-
-		// color (spanning, single color, none)
-		$options['font_color_type'] = ( isset($instance['font-color-type']) ? $instance['font-color-type'] : 'none' );
-		$options['font_color_single'] = ( isset($instance['font-color-single']) ? $instance['font-color-single'] : '' );
-		$options['font_color_spanning'] = ( isset($instance['font-color-spanning']) ? $instance['font-color-spanning'] : '' );
-
-		// canvas size (height and width)
-		$options['canvas_size'] = ( isset($instance['canvas-size']) ? $instance['canvas-size'] : array('width' => 960, 'height' => 420) );
+		foreach( $instance as $k => $v )
+		{
+			$options[ str_replace('-', '_', $k) ] = $v;
+		}
 		
 		return $options;
 	}
