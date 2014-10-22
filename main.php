@@ -14,59 +14,6 @@ Shortcode Example:
 
 [d3-word-cloud title="My Word Cloud" post-types="post,connection" taxonomies="connection-group,connection-link" minimum-count="1" maximum-words="250" orientation="horizontal" font-family="Georgia" font-size="10,100" font-color="green,blue,black" canvas-size="500,500"]
 */
-		$matches = NULL;
-		if( preg_match("/title=\"([^\"]+)\"/", $shortcode, $matches) )
-			$options['title'] = trim($matches[1]);
-			
-		$matches = NULL;
-		if( preg_match("/post-types=\"([^\"]+)\"/", $shortcode, $matches) )
-			$options['post_types'] = explode( ",", trim($matches[1]) );
-
-		$matches = NULL;
-		if( preg_match("/taxonomies=\"([^\"]+)\"/", $shortcode, $matches) )
-			$options['taxonomies'] = explode( ",", trim($matches[1]) );
-			
-		$matches = NULL;
-		if( preg_match("/minimum-count=\"([^\"]+)\"/", $shortcode, $matches) )
-			$options['minimum_count'] = is_int( $matches[1] ) ? intval( $matches[1] ) : $defaults['minimum_count'];
-
-		$matches = NULL;
-		if( preg_match("/maximum-words=\"([^\"]+)\"/", $shortcode, $matches) )
-			$options['maximum_words'] = is_int( $matches[1] ) ? intval( $matches[1] ) : $defaults['maximum_words'];
-
-		$matches = NULL;
-		if( preg_match("/orientation=\"([^\"]+)\"/", $shortcode, $matches) )
-			$options['orientation'] = $matches[1];
-
-		$matches = NULL;
-		if( preg_match("/font-family=\"([^\"]+)\"/", $shortcode, $matches) )
-			$options['font_family'] = trim($matches[1]);
-
-		$matches = NULL;
-		if( preg_match("/font-size=\"([^\"]+)\"/", $shortcode, $matches) )
-		{
-			$options['font_size_type'] = 'custom';
-			$options['font_size'] = trim($matches[1]);
-		}
-		
-		$matches = NULL;
-		if( preg_match("/font-color=\"([^\"]+)\"/", $shortcode, $matches) )
-		{
-			$options['font_color_type'] = 'custom';
-			$options['font_color'] = trim($matches[1]);
-		}
-
-		$matches = NULL;
-		if( preg_match("/canvas-size=\"([^\"]+)\"/", $shortcode, $matches) )
-		{
-			$value = explode( ",", trim($matches[1]) );
-			if( count($value) > 2 )
-				$options['canvas_size'] = array( 'width' => $value[0], 'height' => $value[1] );
-		}
-
-
-
-
 
 
 require_once( dirname(__FILE__).'/widget.php' );
