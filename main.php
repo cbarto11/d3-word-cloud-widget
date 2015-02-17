@@ -16,9 +16,10 @@ Shortcode Example:
 */
 
 
+
 require_once( dirname(__FILE__).'/widget.php' );
 add_action( 'wp_enqueue_scripts', array( 'D3_WordCloud', 'enqueue_scripts' ) );
-add_filter( 'the_content', array('D3_WordCloud', 'process_content_shortcode') );
+add_filter( 'the_content', array('D3_WordCloud', 'process_content_shortcode'), 1 );
 
 
 class D3_WordCloud
