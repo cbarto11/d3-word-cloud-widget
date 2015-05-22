@@ -15,7 +15,7 @@ function d3_word_cloud( div )
 {
 	var self = {}
 	
-	self.id = '#'+div.id+'.d3-word-cloud-container';
+	self.id = '#'+div.id;
 	self.words;
 	self.used_words;
 	self.word_count;
@@ -182,7 +182,7 @@ function d3_word_cloud( div )
 
 window.onload = function()
 {
-	var divs = d3.selectAll('.d3-word-cloud-container');
+	var divs = d3.selectAll('.d3-word-cloud');
 	var clouds = [];
 	
 	for( var i = 0; i < divs[0].length; i++ )
