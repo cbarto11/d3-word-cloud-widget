@@ -146,7 +146,7 @@ function d3_word_cloud( div )
 				.domain( [0, max] )
 				.range( d3.range(20).map(function(i) { return 'd3-word-cloud-text-'+i; }) );
 
-			if( font_color.length == 1 ) font_color = [ font_color[0], font_color[1] ];
+			if( font_color.length == 1 ) font_color = [ font_color[0], font_color[0] ];
 			var increment = max / font_color.length+1;
 			var fill_domain = [];
 			for( var i = 0; i < font_color.length; i++ ) { fill_domain.push(increment*i); }
