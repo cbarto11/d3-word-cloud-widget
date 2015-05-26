@@ -153,6 +153,11 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 		<input id="<?php echo $this->get_field_id( 'canvas_size' ); ?>[width]" name="<?php echo $this->get_field_name( 'canvas_size' ); ?>[width]" type="text" value="<?php echo esc_attr( $canvas_size['width'] ); ?>" class="widefat">
 		<input id="<?php echo $this->get_field_id( 'canvas_size' ); ?>[height]" name="<?php echo $this->get_field_name( 'canvas_size' ); ?>[height]" type="text" value="<?php echo esc_attr( $canvas_size['height'] ); ?>" class="widefat">
 		</p>
+
+		<p>
+		<input type="hidden" name="<?php echo $this->get_field_name( 'hide_debug' ); ?>" value="false" />
+		<input type="checkbox" name="<?php echo $this->get_field_name( 'hide_debug' ); ?>" value="true" <?php checked($hide_debug, 'true'); ?> />
+		Hide Debug Data
 		</p>
 		
 		<?php
@@ -339,6 +344,7 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 		
 		echo '<input type="hidden" class="font-color" value="'.esc_attr($font_color).'" />';
 		echo '<input type="hidden" class="tags" value="'.esc_attr(json_encode($tags)).'" />';
+		echo '<input type="hidden" class="hide-debug" value="'.esc_attr($hide_debug).'" />';
 		echo '<svg width="'.$canvas_size['width'].'" height="'.$canvas_size['height'].'"></svg>';
 		
 		echo '</div>';

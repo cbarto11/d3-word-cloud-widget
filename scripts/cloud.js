@@ -60,10 +60,16 @@ function d3_word_cloud( div )
 				s += word+" ["+self.words[word].count+"]<br/>";
 			}
 		}
+		
+		var hide_debug = unescape( d3.select(self.id+' .hide-debug').attr('value') );
+		var div_style = 'text-align:left;';
+		if( hide_debug == 'true' )
+			div_style += 'display:none;';
+			
 		d3.select( self.id )
 			.append( 'div' )
 				.attr( 'class', 'debug-data' )
-				.attr( 'style', 'text-align:left' )
+				.attr( 'style', div_style )
 				.html( self.word_count+' of '+self.tag_count+' were placed.  Words not placed:<br/>'+s );
 	}
 	
