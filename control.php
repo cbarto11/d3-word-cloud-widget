@@ -1,8 +1,16 @@
 <?php
-/*
-Shortcode Example:
-[d3-word-cloud title="My Word Cloud" post-types="post,connection" taxonomies="connection-group,connection-link" minimum-count="1" maximum-words="250" orientation="horizontal" font-family="Georgia" font-size="10,100" font-color="green,blue,black" canvas-size="500,500"]
-*/
+/**
+ * D3WordCloud_WidgetShortcodeControl
+ * 
+ * The D3WordCloud_WidgetShortcodeControl class for the "D3 Word Cloud" plugin.
+ * Derived from the official WP RSS widget.
+ * 
+ * Shortcode Example:
+ * [d3_word_cloud title="My Word Cloud" post_types="post,connection" taxonomies="connection-group,connection-link" minimum_count="1" maximum_words="250" orientation="horizontal" font_family="Georgia" font-size="10,100" font-color="green,blue,black" canvas_size="500,500"]
+ * 
+ * @package    clas-buttons
+ * @author     Crystal Barton <cbarto11@uncc.edu>
+ */
 
 
 require_once( dirname(__FILE__).'/widget-shortcode-control.php' );
@@ -13,7 +21,8 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 {
 	
 	/**
-	 * 
+	 * Constructor.
+	 * Setup the properties and actions.
 	 */
 	public function __construct()
 	{
@@ -26,7 +35,7 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 	
 	
 	/**
-	 * 
+	 * Enqueues the scripts or styles needed for the control in the site frontend.
 	 */
 	public function enqueue_scripts()
 	{
@@ -37,7 +46,9 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 	
 	
 	/**
-	 *
+	 * Output the widget form in the admin.
+	 * Use this function instead of form.
+	 * @param   array   $options  The current settings for the widget.
 	 */
 	public function print_widget_form( $options )
 	{
@@ -54,11 +65,11 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 		</p>
 		
 		<p>
-		<label for="<?php echo $this->get_field_id( 'post-type' ); ?>"><?php _e( 'Post Type:' ); ?></label> 
+		<label for="<?php echo $this->get_field_id( 'post_type' ); ?>"><?php _e( 'Post Type:' ); ?></label> 
 		<br/>
 		<?php foreach( $all_post_types as $pt ): ?>
 			<?php if( in_array($pt->name, $exclude_post_types) ) continue; ?>
-			<input type="checkbox" name="<?php echo $this->get_field_name( 'post-types' ); ?>[]" value="<?php echo esc_attr( $pt->name ); ?>" <?php echo ( in_array($pt->name, $post_types) ? 'checked' : '' ); ?> />
+			<input type="checkbox" name="<?php echo $this->get_field_name( 'post_types' ); ?>[]" value="<?php echo esc_attr( $pt->name ); ?>" <?php echo ( in_array($pt->name, $post_types) ? 'checked' : '' ); ?> />
 			<?php echo $pt->label; ?>
 			<br/>
 		<?php endforeach; ?>
@@ -76,13 +87,13 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 		</p>
 
 		<p>
-		<label for="<?php echo $this->get_field_id( 'minimum-count' ); ?>"><?php _e( 'Minimum Post Count:' ); ?></label> 
-		<input id="<?php echo $this->get_field_id( 'minimum-count' ); ?>" name="<?php echo $this->get_field_name( 'minimum-count' ); ?>" type="text" value="<?php echo esc_attr( $minimum_count ); ?>">
+		<label for="<?php echo $this->get_field_id( 'minimum_count' ); ?>"><?php _e( 'Minimum Post Count:' ); ?></label> 
+		<input id="<?php echo $this->get_field_id( 'minimum_count' ); ?>" name="<?php echo $this->get_field_name( 'minimum_count' ); ?>" type="text" value="<?php echo esc_attr( $minimum_count ); ?>">
 		</p>
 		
 		<p>
-		<label for="<?php echo $this->get_field_id( 'maximum-words' ); ?>"><?php _e( 'Maximum Words:' ); ?></label> 
-		<input id="<?php echo $this->get_field_id( 'maximum-words' ); ?>" name="<?php echo $this->get_field_name( 'maximum-words' ); ?>" type="text" value="<?php echo esc_attr( $maximum_words ); ?>">
+		<label for="<?php echo $this->get_field_id( 'maximum_words' ); ?>"><?php _e( 'Maximum Words:' ); ?></label> 
+		<input id="<?php echo $this->get_field_id( 'maximum_words' ); ?>" name="<?php echo $this->get_field_name( 'maximum_words' ); ?>" type="text" value="<?php echo esc_attr( $maximum_words ); ?>">
 		</p>
 
 		<p>
@@ -105,37 +116,43 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 		</p>
 
 		<p>
-		<label for="<?php echo $this->get_field_id( 'font-family' ); ?>"><?php _e( 'Font Family:' ); ?></label> 
-		<input class="widefat" id="<?php echo $this->get_field_id( 'font-family' ); ?>" name="<?php echo $this->get_field_name( 'font-family' ); ?>" type="text" value="<?php echo esc_attr( $font_family ); ?>" class="widefat">
+		<label for="<?php echo $this->get_field_id( 'font_family' ); ?>"><?php _e( 'Font Family:' ); ?></label> 
+		<input class="widefat" id="<?php echo $this->get_field_id( 'font_family' ); ?>" name="<?php echo $this->get_field_name( 'font_family' ); ?>" type="text" value="<?php echo esc_attr( $font_family ); ?>" class="widefat">
 		</p>
 
 		<p>
-		<label for="<?php echo $this->get_field_id( 'font-size' ); ?>"><?php _e( 'Font Size:' ); ?></label> 
-		<input type="radio" name="<?php echo $this->get_field_name( 'font-size-type' ); ?>" value="single" <?php echo ( $font_size_type == "single" ? 'checked' : '' ); ?> />
+		<label for="<?php echo $this->get_field_id( 'font_size' ); ?>"><?php _e( 'Font Size:' ); ?></label> 
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'font_size_type' ); ?>" value="single" <?php echo ( $font_size_type == "single" ? 'checked' : '' ); ?> />
 			Single: 
-			<input id="<?php echo $this->get_field_id( 'font-size-single' ); ?>" name="<?php echo $this->get_field_name( 'font-size-single' ); ?>" type="text" value="<?php echo esc_attr( $font_size_single ); ?>" class="widefat">
-		<input type="radio" name="<?php echo $this->get_field_name( 'font-size-type' ); ?>" value="range" <?php echo ( $font_size_type == "range" ? 'checked' : '' ); ?> />
+			<input id="<?php echo $this->get_field_id( 'font_size_single' ); ?>" name="<?php echo $this->get_field_name( 'font_size_single' ); ?>" type="text" value="<?php echo esc_attr( $font_size_single ); ?>" class="widefat">
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'font_size_type' ); ?>" value="range" <?php echo ( $font_size_type == "range" ? 'checked' : '' ); ?> />
 			Range: 
-			<input id="<?php echo $this->get_field_id( 'font-size-range' ); ?>[start]" name="<?php echo $this->get_field_name( 'font-size-range' ); ?>[start]" type="text" value="<?php echo esc_attr( $font_size_range['start'] ); ?>" class="widefat">
-			<input id="<?php echo $this->get_field_id( 'font-size-range' ); ?>[end]" name="<?php echo $this->get_field_name( 'font-size-range' ); ?>[end]" type="text" value="<?php echo esc_attr( $font_size_range['end'] ); ?>" class="widefat">
+			<input id="<?php echo $this->get_field_id( 'font_size_range' ); ?>[start]" name="<?php echo $this->get_field_name( 'font_size_range' ); ?>[start]" type="text" value="<?php echo esc_attr( $font_size_range['start'] ); ?>" class="widefat">
+			<input id="<?php echo $this->get_field_id( 'font_size_range' ); ?>[end]" name="<?php echo $this->get_field_name( 'font_size_range' ); ?>[end]" type="text" value="<?php echo esc_attr( $font_size_range['end'] ); ?>" class="widefat">
 		</p>		
 
 		<p>
-		<label for="<?php echo $this->get_field_id( 'font-size' ); ?>"><?php _e( 'Font Color:' ); ?></label> 
-		<input type="radio" name="<?php echo $this->get_field_name( 'font-color-type' ); ?>" value="none" <?php echo ( $font_color_type == "none" ? 'checked' : '' ); ?> />
+		<label for="<?php echo $this->get_field_id( 'font_size' ); ?>"><?php _e( 'Font Color:' ); ?></label> 
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'font_color_type' ); ?>" value="none" <?php echo ( $font_color_type == "none" ? 'checked' : '' ); ?> />
 		None
-		<input type="radio" name="<?php echo $this->get_field_name( 'font-color-type' ); ?>" value="single" <?php echo ( $font_color_type == "single" ? 'checked' : '' ); ?> />
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'font_color_type' ); ?>" value="single" <?php echo ( $font_color_type == "single" ? 'checked' : '' ); ?> />
 		Single:
-			<input id="<?php echo $this->get_field_id( 'font-color-single' ); ?>" name="<?php echo $this->get_field_name( 'font-color-single' ); ?>" type="text" value="<?php echo esc_attr( $font_color_single ); ?>" class="widefat">
-		<input type="radio" name="<?php echo $this->get_field_name( 'font-color-type' ); ?>" value="spanning" <?php echo ( $font_color_type == "spanning" ? 'checked' : '' ); ?> />
+			<input id="<?php echo $this->get_field_id( 'font_color_single' ); ?>" name="<?php echo $this->get_field_name( 'font_color_single' ); ?>" type="text" value="<?php echo esc_attr( $font_color_single ); ?>" class="widefat">
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'font_color_type' ); ?>" value="spanning" <?php echo ( $font_color_type == "spanning" ? 'checked' : '' ); ?> />
 		Spanning:
-			<input class="widefat" id="<?php echo $this->get_field_id( 'font-color-spanning' ); ?>" name="<?php echo $this->get_field_name( 'font-color-spanning' ); ?>" type="text" value="<?php echo esc_attr( $font_color_spanning ); ?>" class="widefat">
+			<input class="widefat" id="<?php echo $this->get_field_id( 'font_color_spanning' ); ?>" name="<?php echo $this->get_field_name( 'font_color_spanning' ); ?>" type="text" value="<?php echo esc_attr( $font_color_spanning ); ?>" class="widefat">
 		</p>
 
 		<p>
-		<label for="<?php echo $this->get_field_id( 'canvas-size' ); ?>"><?php _e( 'Canvas Size:' ); ?></label> 
-		<input id="<?php echo $this->get_field_id( 'canvas-size' ); ?>[width]" name="<?php echo $this->get_field_name( 'canvas-size' ); ?>[width]" type="text" value="<?php echo esc_attr( $canvas_size['width'] ); ?>" class="widefat">
-		<input id="<?php echo $this->get_field_id( 'canvas-size' ); ?>[height]" name="<?php echo $this->get_field_name( 'canvas-size' ); ?>[height]" type="text" value="<?php echo esc_attr( $canvas_size['height'] ); ?>" class="widefat">
+		<label for="<?php echo $this->get_field_id( 'canvas_size' ); ?>"><?php _e( 'Canvas Size:' ); ?></label> 
+		<input id="<?php echo $this->get_field_id( 'canvas_size' ); ?>[width]" name="<?php echo $this->get_field_name( 'canvas_size' ); ?>[width]" type="text" value="<?php echo esc_attr( $canvas_size['width'] ); ?>" class="widefat">
+		<input id="<?php echo $this->get_field_id( 'canvas_size' ); ?>[height]" name="<?php echo $this->get_field_name( 'canvas_size' ); ?>[height]" type="text" value="<?php echo esc_attr( $canvas_size['height'] ); ?>" class="widefat">
+		</p>
 		</p>
 		
 		<?php
@@ -143,7 +160,8 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 	
 	
 	/**
-	 *
+	 * Get the default settings for the widget or shortcode.
+	 * @return  array  The default settings.
 	 */
 	public function get_default_options()
 	{
@@ -153,77 +171,84 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 		$defaults['title'] = '';
 
 		// post types
-		$defaults['all-post-types'] = get_post_types( array(), 'objects' );
-		$defaults['exclude-post-types'] = array( 'attachment', 'revision', 'nav-menu-item' );
-		$defaults['post-types'] = array('post');
+		$defaults['all_post_types'] = get_post_types( array(), 'objects' );
+		$defaults['exclude_post_types'] = array( 'attachment', 'revision', 'nav-menu-item' );
+		$defaults['post_types'] = array('post');
 
 		// taxonomy types
-		$defaults['all-taxonomies'] = get_taxonomies( array(), 'objects' );
-		$defaults['exclude-taxonomies'] = array( 'nav-menu', 'link-category', 'post-format' );
-		$defaults['taxonomies'] = array('post-tag');
+		$defaults['all_taxonomies'] = get_taxonomies( array(), 'objects' );
+		$defaults['exclude_taxonomies'] = array( 'nav-menu', 'link-category', 'post-format' );
+		$defaults['taxonomies'] = array('post_tag');
 
 		// minimum count
-		$defaults['minimum-count'] = 1;
+		$defaults['minimum_count'] = 1;
 
 		// max words (# or none)
-		$defaults['maximum-words'] = 250;
+		$defaults['maximum_words'] = 250;
 		
 		// words orientation
 		$defaults['orientation'] = 'horizontal';
 
-		// font-family
-		$defaults['font-family'] = 'Arial';
+		// font_family
+		$defaults['font_family'] = 'Arial';
 
 		// font-size (range or single)
-		$defaults['font-size-type'] = 'range';
-		$defaults['font-size-range'] = array('start' => 10, 'end' => 100);
-		$defaults['font-size-single'] = 60;
+		$defaults['font_size_type'] = 'range';
+		$defaults['font_size_range'] = array('start' => 10, 'end' => 100);
+		$defaults['font_size_single'] = 60;
 
 		// color (spanning, single color, none)
-		$defaults['font-color-type'] = 'none';
-		$defaults['font-color-single'] = '';
-		$defaults['font-color-spanning'] = '';
+		$defaults['font_color_type'] = 'none';
+		$defaults['font_color_single'] = '';
+		$defaults['font_color_spanning'] = '';
 
 		// canvas size (height and width)
-		$defaults['canvas-size'] = array('width' => 960, 'height' => 420);
+		$defaults['canvas_size'] = array('width' => 960, 'height' => 420);
+		
+		$defaults['hide_debug'] = 'true';
 		
 		return $defaults;
 	}
 	
 	
 	/**
-	 * 
+	 * Process options from the database or shortcode.
+	 * Designed to convert options from strings or sanitize output.
+	 * @param   array   $options  The current settings for the widget or shortcode.
+	 * @return  array   The processed settings.
 	 */
-	public function process_shortcode_options( $options )
+	public function process_options( $options )
 	{
+		if( $this->control_type == 'widget' ) return $options;
+		
 		foreach( $options as $k => &$v )
 		{
-			$v = trim( $v );
+			if( is_string($v) ) $v = trim( $v );
 		}
 		
-		if( array_key_exists('post-types', $options) ) 
-			$options['post-types'] = explode( ',', $options['post-types'] );
+		if( array_key_exists('post_types', $options) ) 
+			$options['post_types'] = explode( ',', $options['post_types'] );
 		
 		if( array_key_exists('taxonomies', $options) ) 
 			$options['taxonomies'] = explode( ',', $options['taxonomies'] );
 		
-		if( array_key_exists('minimum-count', $options) && is_int($options['minimum-count']) )
-			$options['minimum-count'] = intval( $options['minimum-count'] );
+		if( array_key_exists('minimum_count', $options) && is_int($options['minimum_count']) )
+			$options['minimum_count'] = intval( $options['minimum_count'] );
 		
-		if( array_key_exists('maximum-words', $options) && is_int($options['maximum-words']) )
-			$options['maximum-words'] = intval( $options['maximum-words'] );
+		if( array_key_exists('maximum_words', $options) && is_int($options['maximum_words']) )
+			$options['maximum_words'] = intval( $options['maximum_words'] );
 		
-		if( array_key_exists('font-size', $options) )		
-			$options['font-size-type'] = 'custom';
+		if( array_key_exists('font_size', $options) )		
+			$options['font_size_type'] = 'custom';
 
-		if( array_key_exists('font-color', $options) )		
-			$options['font-color-type'] = 'custom';
+		if( array_key_exists('font_color', $options) )		
+			$options['font_color_type'] = 'custom';
 
-		if( array_key_exists('canvas-size', $options) )
+		if( array_key_exists('canvas_size', $options) )
 		{
-			$value = explode( ",", $options['canvas-size'] );
+			$value = explode( ",", $options['canvas_size'] );
 			if( count($value) >= 2 )
-				$options['canvas-size'] = array( 'width' => $value[0], 'height' => $value[1] );
+				$options['canvas_size'] = array( 'width' => $value[0], 'height' => $value[1] );
 		}
 		
 		return $options;
@@ -231,32 +256,12 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 	
 	
 	/**
-	 * 
-	 */
-	public function merge_options( $options )
-	{
-		$options = array_merge( $this->get_default_options(), $options );
-		
-		$opts = array();
-		foreach( $options as $k => $v )
-		{
-			$opts[ str_replace('-', '_', $k) ] = $v;
-		}
-		
-		return $opts;
-	}
-
-
-	/**
-	 * 
-	 * @param   string  $shortcode  The shortcode found the post's content.
-	 * @return  string  The converted shortcode.
+	 * Echo the widget or shortcode contents.
+	 * @param   array  $options  The current settings for the control.
+	 * @param   array  $args     The display arguments.
 	 */
 	public function print_control( $options, $args = null )
 	{
-		$options = $this->merge_options( $options );
-		if( !$args ) $args = $this->get_args();
-		
 		extract( $options );
 		
 		$terms = get_terms(
@@ -269,19 +274,23 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 		);
 		
 		$tags = array();
-		foreach( $terms as $term )
+		if( $terms && !is_wp_error($terms) )
 		{
-			if( $term->count >= intval($minimum_count) )
+			foreach( $terms as $term )
 			{
-				$tags[] = array(
-					'name'	=> $term->name,
-					'count'	=> $term->count,
-					'url'	=> get_term_link( $term ),
-				);
+				if( $term->count >= intval($minimum_count) )
+				{
+					$tags[] = array(
+						'name'	=> $term->name,
+						'count'	=> $term->count,
+						'url'	=> get_term_link( $term ),
+					);
+				}
 			}
 		}
 		
 		echo $args['before_widget'];
+		echo '<div id="d3-word-cloud-control-'.self::$index.'" class="wscontrol d3-word-cloud-control">';
 		
 		if( !empty($title) )
 		{
@@ -332,6 +341,7 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 		echo '<input type="hidden" class="tags" value="'.esc_attr(json_encode($tags)).'" />';
 		echo '<svg width="'.$canvas_size['width'].'" height="'.$canvas_size['height'].'"></svg>';
 		
+		echo '</div>';
 		echo $args['after_widget'];		
 	}
 	

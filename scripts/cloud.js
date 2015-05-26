@@ -182,13 +182,12 @@ function d3_word_cloud( div )
 
 window.onload = function()
 {
-	var divs = d3.selectAll('.d3-word-cloud');
+	var divs = d3.selectAll('.d3-word-cloud-control');
 	var clouds = [];
 	
 	for( var i = 0; i < divs[0].length; i++ )
 	{
 		var cloud = new d3_word_cloud(divs[0][i]);
-		//cloud.process_cloud();
 		clouds.push(cloud);
 	}
 }
