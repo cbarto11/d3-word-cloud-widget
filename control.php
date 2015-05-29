@@ -231,10 +231,10 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 			if( is_string($v) ) $v = trim( $v );
 		}
 		
-		if( array_key_exists('post_types', $options) ) 
+		if( array_key_exists('post_types', $options) && is_string($options['post_types']) ) 
 			$options['post_types'] = explode( ',', $options['post_types'] );
 		
-		if( array_key_exists('taxonomies', $options) ) 
+		if( array_key_exists('taxonomies', $options) && is_string($options['taxonomies']) ) 
 			$options['taxonomies'] = explode( ',', $options['taxonomies'] );
 		
 		if( array_key_exists('minimum_count', $options) && is_int($options['minimum_count']) )
@@ -249,7 +249,7 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 		if( array_key_exists('font_color', $options) )		
 			$options['font_color_type'] = 'custom';
 
-		if( array_key_exists('canvas_size', $options) )
+		if( array_key_exists('canvas_size', $options) && is_string($options['canvas_size']) )
 		{
 			$value = explode( ",", $options['canvas_size'] );
 			if( count($value) >= 2 )
