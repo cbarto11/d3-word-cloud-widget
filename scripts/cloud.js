@@ -93,8 +93,14 @@ function d3_word_cloud( div )
 		tags = JSON.parse( tags );
 
 		var canvas = d3.select(self.id+' svg');
-		var width = d3.select(self.id+' svg').style("width").replace('px', '');
-		var height = d3.select(self.id+' svg').style("height").replace('px', '');
+//		var width = d3.select(self.id+' svg').style("width").replace('px', '');
+//		var height = d3.select(self.id+' svg').style("height").replace('px', '');
+		
+		var width = canvas.clientWidth || canvas.innerWidth;
+		width = ( width == undefined ? 0 : width );
+		var height = canvas.clientHeight || canvas.innerHeight;
+		height = ( height == undefined ? 0 : height );
+		
 		canvas_size = [ +width, +height ];
 
 		var layout = d3.layout.cloud()
