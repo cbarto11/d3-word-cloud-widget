@@ -83,6 +83,20 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 			<br/>
 		<?php endforeach; ?>
 		</p>
+		
+		<p>
+		<label for="<?php echo $this->get_field_id( 'filterby_taxonomy' ); ?>"><?php _e( 'Filter By:' ); ?></label>
+		<br/>
+		<?php foreach( $all_taxonomies as $tax ): ?>
+			<?php if( in_array($tax->name, $exclude_taxonomies) ) continue; ?>
+			<input type="radio" name="<?php echo $this->get_field_name( 'filterby_taxonomy' ); ?>" value="<?php echo esc_attr( $tax->name ); ?>" <?php echo ( $tax->name == $filterby_taxonomy ? 'checked' : '' ); ?> />
+			<?php echo $tax->label; ?>
+			<br/>
+		<?php endforeach; ?>
+		<label for="<?php echo $this->get_field_id( 'filterby_terms' ); ?>"><?php _e( 'Terms:' ); ?></label>
+		<br/>
+		<input type="text" name="<?php echo $this->get_field_name( 'filterby_terms' ); ?>" value="<?php echo esc_attr($filterby_terms); ?>" />
+		</p>
 
 		<p>
 		<label for="<?php echo $this->get_field_id( 'minimum_count' ); ?>"><?php _e( 'Minimum Post Count:' ); ?></label> 
@@ -183,6 +197,11 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 		$defaults['exclude_taxonomies'] = array( 'nav-menu', 'link-category', 'post-format' );
 		$defaults['taxonomies'] = array('post_tag');
 
+		// filter by
+		$defaults['filterby'] = array();
+		$defaults['filterby_taxonomy'] = '';
+		$defaults['filterby_terms'] = '';
+
 		// minimum count
 		$defaults['minimum_count'] = 1;
 
@@ -222,6 +241,42 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 	 */
 	public function process_options( $options )
 	{
+		if( !empty($options['filterby_taxonomy']) )
+		{
+			$options['filterby'] = array(
+				array(
+					'taxonomy' 	=> $options['filterby_taxonomy'],
+					'terms' 	=> $options['filterby_terms'],
+					'field' 	=> 'slug',
+				)
+			);
+		}
+
+		if( array_key_exists('filterby', $options) && is_string($options['filterby']) )
+		{
+			$options['filterby'] = explode( ';', $options['filterby'] );
+		}
+
+		if( array_key_exists('filterby', $options) && is_array($options['filterby']) )
+		{
+			foreach( $options['filterby'] as &$filterby )
+			{
+				if( is_array($filterby) ) continue;
+
+				$filterby_parts = explode( ':', $filterby );
+				if( count($filterby_parts) < 2 )
+				{
+					unset($filterby);
+					continue;
+				}
+				$filterby = array(
+					'taxonomy'	=> $filterby_parts[0],
+					'terms'    	=> explode( ',', $filterby_parts[1] ),
+					'field'    	=> 'slug',
+				);
+			}
+		}
+
 		if( $this->control_type == 'widget' ) return $options;
 		
 		foreach( $options as $k => &$v )
@@ -267,14 +322,53 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 	{
 		extract( $options );
 		
-		$terms = get_terms(
-			$taxonomies, 
-			array( 
-				'orderby'	=> 'count', 
-				'order'		=> 'DESC', 
-				'number'	=> intval($maximum_words),
-			)
-		);
+		if( !empty($filterby) )
+		{
+			$allterms = array();
+
+			$filterby['relation'] = 'AND';
+			$q = new WP_Query(
+				array(
+					'post_type' => $post_types,
+					'tax_query' => $filterby,
+				)
+			);
+
+			while( $q->have_posts() )
+			{
+				$q->the_post();
+				$post_terms = array();
+				foreach( $taxonomies as $tax )
+				{
+					$t = get_the_terms( get_the_ID(), $tax );
+					if( is_array($t) )
+						$post_terms = array_merge( $post_terms, $t );
+				}
+
+				$allterms = array_merge( $allterms, $post_terms );
+			}
+
+			wp_reset_postdata();
+
+			$terms = array();
+			foreach( $allterms as $term )
+			{
+				if( !array_key_exists($term->name, $terms) )
+					$terms[$term->name] = $term;
+			}
+			$allterms = null;
+		}
+		else
+		{
+			$terms = get_terms(
+				$taxonomies, 
+				array( 
+					'orderby'	=> 'count', 
+					'order'		=> 'DESC', 
+					'number'	=> intval($maximum_words),
+				)
+			);
+		}
 		
 		$tags = array();
 		if( $terms && !is_wp_error($terms) )
