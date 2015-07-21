@@ -16,6 +16,7 @@ function d3_word_cloud( div )
 	var self = {}
 	
 	self.id = '#'+div.id;
+	self.div = div;
 	self.words;
 	self.used_words;
 	self.word_count;
@@ -60,8 +61,9 @@ function d3_word_cloud( div )
 				s += word+" ["+self.words[word].count+"]<br/>";
 			}
 		}
-		
-		var hide_debug = unescape( d3.select(self.id+' .hide-debug').attr('value') );
+
+//		var hide_debug = unescape( d3.select(self.id+' .hide-debug').attr('value') );
+		var hide_debug = unescape( div.getElementsByClassName('hide-debug')[0].value );
 		var div_style = 'text-align:left;';
 		if( hide_debug == 'true' )
 			div_style += 'display:none;';
@@ -75,9 +77,11 @@ function d3_word_cloud( div )
 	
 	self.process_cloud = function()
 	{
-		var font_family = unescape( d3.select(self.id+' .font-family').attr('value') );
+//		var font_family = unescape( d3.select(self.id+' .font-family').attr('value') );
+		var font_family = unescape( div.getElementsByClassName('font-family')[0].value );
 
-		var font_size = unescape( d3.select(self.id+' .font-size').attr('value') );
+//		var font_size = unescape( d3.select(self.id+' .font-size').attr('value') );
+		var font_size = unescape( div.getElementsByClassName('font-size')[0].value );
 		font_size = font_size.split(',');
 		if( font_size.length < 2 )
 		{
@@ -86,14 +90,16 @@ function d3_word_cloud( div )
 		}
 		font_size = d3.scale['log']().range( font_size );
 
-		var font_color = unescape( d3.select(self.id+' .font-color').attr('value') );
+//		var font_color = unescape( d3.select(self.id+' .font-color').attr('value') );
+		var font_color = unescape( div.getElementsByClassName('font-color')[0].value );
 		font_color = font_color.split(',');
 	
-		var tags = unescape( d3.select(self.id+' .tags').attr('value') );
+//		var tags = unescape( d3.select(self.id+' .tags').attr('value') );
+		var tags = unescape( div.getElementsByClassName('tags')[0].value );
 		tags = JSON.parse( tags );
 
-		var parent_div = d3.select(self.id);
-		var canvas = d3.select(self.id+' svg');
+//		var canvas = d3.select(self.id+' svg');
+		var canvas = d3.select( div.getElementsByTagName('svg')[0] );
 		var width = window.getComputedStyle( canvas[0][0] ).width.replace('px','');
 		var height = window.getComputedStyle( canvas[0][0] ).height.replace('px','');
 
@@ -112,7 +118,8 @@ function d3_word_cloud( div )
 			.text( function(d) { return d.name; } )
 			.on( 'end', self.draw );
 
-		var orientation = unescape( d3.select(self.id+' .orientation').attr('value') );
+//		var orientation = unescape( d3.select(self.id+' .orientation').attr('value') );
+		var orientation = unescape( div.getElementsByClassName('orientation')[0].value );
 		if( orientation == 'random' )
 		{
 			var r = Math.round(Math.random() * 4);
@@ -123,7 +130,13 @@ function d3_word_cloud( div )
 		{
 			case( 'horizontal' ): layout.rotate( 0 ); break;
 			case( 'vertical' ): layout.rotate( 270 ); break;
-			case( 'mixed' ): layout.rotate( function() { return Math.round(Math.random()) * 270; } ); break;
+			case( 'mixed' ):
+				layout.rotate(
+					function()
+					{
+						return Math.round(Math.random()) * 270;
+					});
+				break;
 			case( 'mostly-horizontal' ): 
 				layout.rotate(
 					function()
