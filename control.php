@@ -331,6 +331,7 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 				array(
 					'post_type' => $post_types,
 					'tax_query' => $filterby,
+					'posts_per_page' => -1,
 				)
 			);
 
