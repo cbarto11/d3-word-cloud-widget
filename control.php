@@ -1,10 +1,8 @@
 <?php
 
-require_once( dirname(__FILE__).'/widget-shortcode-control.php' );
+require_once( __DIR__.'/widget-shortcode-control.php' );
 
 /**
- * D3WordCloud_WidgetShortcodeControl
- * 
  * The D3WordCloud_WidgetShortcodeControl class for the "D3 Word Cloud" plugin.
  * Derived from the official WP RSS widget.
  * 
@@ -12,7 +10,7 @@ require_once( dirname(__FILE__).'/widget-shortcode-control.php' );
  * [d3_word_cloud title="My Word Cloud" post_types="post,connection" taxonomies="connection-group,connection-link" minimum_count="1" maximum_words="250" orientation="horizontal" font_family="Georgia" font_size="10,100" font_color="green,blue,black" canvas_size="500,500"]
  * 
  * @package    clas-buttons
- * @author     Crystal Barton <cbarto11@uncc.edu>
+ * @author     Crystal Barton <atrus1701@gmail.com>
  */
 if( !class_exists('D3WordCloud_WidgetShortcodeControl') ):
 class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
@@ -443,7 +441,6 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 		echo '</div>';
 		echo $args['after_widget'];		
 	}
-	
 }
 endif;
 

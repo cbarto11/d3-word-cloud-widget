@@ -1,19 +1,19 @@
-/* 
-<div class="d3-word-cloud-container">
-
-	<input type="hidden" class="font-family" value="Helvetica">
-	<input type="hidden" class="font-size" value="20,120">
-	<input type="hidden" class="font-color" value="black">
-	<input type="hidden" class="tags" value="{&quot;name&quot;:&quot;quest&quot;,&quot;count&quot;:3,&quot;url&quot;:&quot;http:\/\/localhost\/wordpress-ms\/news-site\/tag\/quest\/&quot;}">
-	<canvas width="800" height="400"></canvas>
-
-</div>
-*/
+/**
+ * D3 script for the Word Cloud WordPress shortcode and widget.
+ *
+ * @package    d3-word-cloud-widget
+ * @author     Crystal Barton <atrus1701@gmail.com>
+ * @version    1.0
+ */
 
 
+/**
+ * Setup the Word Cloud control.
+ * @param  DivElement  div  The Word Cloud control container.
+ */
 function d3_word_cloud( div )
 {
-	var self = {}
+	var self = {};
 	
 	self.id = '#'+div.id;
 	self.div = div;
@@ -22,6 +22,7 @@ function d3_word_cloud( div )
 	self.word_count;
 	self.tag_count;
 	
+	// Draw the terms in the word cloud.
 	self.draw = function( data, bounds )
 	{
 		self.word_count = data.length;
@@ -37,7 +38,6 @@ function d3_word_cloud( div )
 				.enter()
 				.append( 'a' )
 					.attr( 'xlink:href', function(d,i) { return self.words[d.text].url; } );
-					//.attr( 'target', '_blank' )
 		
 		anchors
 			.append( 'title' )
@@ -50,7 +50,6 @@ function d3_word_cloud( div )
 				.style( 'font-size', function(d) { return d.size + 'px'; } )
 				.style( 'font-family', function(d) { return d.font; } )
 				.style( 'fill', function(d) { return self.fill( self.words[d.text].count ); } )
-				//.attr( 'class', function(d) { return quantize( words[d.text].count ); } )
 				.text( function(d) { return d.text; } );
 		
 		var s = "";
@@ -62,7 +61,6 @@ function d3_word_cloud( div )
 			}
 		}
 
-//		var hide_debug = unescape( d3.select(self.id+' .hide-debug').attr('value') );
 		var hide_debug = unescape( div.getElementsByClassName('hide-debug')[0].value );
 		var div_style = 'text-align:left;';
 		if( hide_debug == 'true' )
@@ -75,12 +73,11 @@ function d3_word_cloud( div )
 				.html( self.word_count+' of '+self.tag_count+' were placed.  Words not placed:<br/>'+s );
 	}
 	
+	// Process the word cloud settings and start the layout.
 	self.process_cloud = function()
 	{
-//		var font_family = unescape( d3.select(self.id+' .font-family').attr('value') );
 		var font_family = unescape( div.getElementsByClassName('font-family')[0].value );
 
-//		var font_size = unescape( d3.select(self.id+' .font-size').attr('value') );
 		var font_size = unescape( div.getElementsByClassName('font-size')[0].value );
 		font_size = font_size.split(',');
 		if( font_size.length < 2 )
@@ -90,23 +87,16 @@ function d3_word_cloud( div )
 		}
 		font_size = d3.scale['log']().range( font_size );
 
-//		var font_color = unescape( d3.select(self.id+' .font-color').attr('value') );
 		var font_color = unescape( div.getElementsByClassName('font-color')[0].value );
 		font_color = font_color.split(',');
 	
-//		var tags = unescape( d3.select(self.id+' .tags').attr('value') );
 		var tags = unescape( div.getElementsByClassName('tags')[0].value );
 		tags = JSON.parse( tags );
 
-//		var canvas = d3.select(self.id+' svg');
 		var canvas = d3.select( div.getElementsByTagName('svg')[0] );
 		var width = window.getComputedStyle( canvas[0][0] ).width.replace('px','');
 		var height = window.getComputedStyle( canvas[0][0] ).height.replace('px','');
 
-		// alert(width);
-		// alert(height);
-		// return;
-		
 		canvas_size = [ +width, +height ];
 
 		var layout = d3.layout.cloud()
@@ -118,7 +108,6 @@ function d3_word_cloud( div )
 			.text( function(d) { return d.name; } )
 			.on( 'end', self.draw );
 
-//		var orientation = unescape( d3.select(self.id+' .orientation').attr('value') );
 		var orientation = unescape( div.getElementsByClassName('orientation')[0].value );
 		if( orientation == 'random' )
 		{
@@ -157,34 +146,27 @@ function d3_word_cloud( div )
 				break;
 			default: layout.rotate( 0 ); break;
 		}
-		//layout.rotate( function() { return Math.round(Math.random() * 4) * 45; } )
 
 		var background = canvas.append( 'g' );
 		var vis = canvas.append( 'g' )
 			.attr( 'transform', 'translate(' + [canvas_size[0] >> 1, canvas_size[1] >> 1] + ')' );
 
-		if( tags.length )
-		{
-			var min = d3.min( tags, function(d) { return +d.count; } );
-			var max = d3.max( tags, function(d) { return +d.count; } );
-			var quantize = d3.scale.quantize()
-				.domain( [0, max] )
-				.range( d3.range(20).map(function(i) { return 'd3-word-cloud-text-'+i; }) );
+		if( !tags.length ) return;
 
-			if( font_color.length == 1 ) font_color = [ font_color[0], font_color[0] ];
-			var increment = max / font_color.length+1;
-			var fill_domain = [];
-			for( var i = 0; i < font_color.length; i++ ) { fill_domain.push(increment*i); }
-			if( fill_domain.length == 1 ) fill_domain = [ fill_domain[0], max ];
+		var min = d3.min( tags, function(d) { return +d.count; } );
+		var max = d3.max( tags, function(d) { return +d.count; } );
+		var quantize = d3.scale.quantize()
+			.domain( [0, max] )
+			.range( d3.range(20).map(function(i) { return 'd3-word-cloud-text-'+i; }) );
 
-			var fill = d3.scale.linear().domain(fill_domain).range(font_color);
-			font_size.domain( [min, max] );
-		}
-		else
-		{
-			// no tags...
-			return;
-		}
+		if( font_color.length == 1 ) font_color = [ font_color[0], font_color[0] ];
+		var increment = max / font_color.length+1;
+		var fill_domain = [];
+		for( var i = 0; i < font_color.length; i++ ) { fill_domain.push(increment*i); }
+		if( fill_domain.length == 1 ) fill_domain = [ fill_domain[0], max ];
+
+		var fill = d3.scale.linear().domain(fill_domain).range(font_color);
+		font_size.domain( [min, max] );
 
 		layout.stop().words( tags );
 
@@ -205,6 +187,8 @@ function d3_word_cloud( div )
 	self.process_cloud();
 }
 
+
+// Process each D3 Word Cloud controls.
 window.onload = function()
 {
 	var divs = d3.selectAll('.d3-word-cloud-control');
@@ -212,10 +196,8 @@ window.onload = function()
 	
 	for( var i = 0; i < divs[0].length; i++ )
 	{
-		var cloud = new d3_word_cloud(divs[0][i]);
-		clouds.push(cloud);
+		var cloud = new d3_word_cloud( divs[0][i] );
+		clouds.push( cloud );
 	}
 }
-
-
 
