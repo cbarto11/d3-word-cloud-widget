@@ -189,7 +189,7 @@ function d3_word_cloud( div )
 
 
 // Process each D3 Word Cloud controls.
-window.onload = function()
+jQuery(document).ready( function($)
 {
 	var divs = d3.selectAll('.d3-word-cloud-control');
 	var clouds = [];
@@ -199,5 +199,5 @@ window.onload = function()
 		var cloud = new d3_word_cloud( divs[0][i] );
 		clouds.push( cloud );
 	}
-}
+});
 

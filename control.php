@@ -1,8 +1,6 @@
 <?php
 
 require_once( __DIR__.'/widget-shortcode-control.php' );
-require_once( D3_WORD_CLOUD_WIDGET_PLUGIN_PATH . '/classes/model.php' );
-
 
 /**
  * The D3WordCloud_WidgetShortcodeControl class for the "D3 Word Cloud" plugin.
@@ -53,37 +51,125 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 		$options = $this->merge_options( $options );
 		extract( $options );
 		
-		$model = D3WordCloudWidget_Model::get_instance();
-		$clouds = $model->get_all_clouds( true );
-		
 		?>
+		
 		<p>
-		<label for="<?php echo $this->get_field_id( 'name' ); ?>">
-			<?php _e( 'Cloud Name:' ); ?>
-		</label> 
+		<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:' ); ?></label> 
 		<br/>
-		<?php
-		
-		if( empty( $clouds ) ):
-			echo 'No clouds found.';
-		else:
-			?>
-			<select name="<?php echo $this->get_field_name( 'name' ); ?>">
-			<?php
-			foreach( $clouds as $cloud ):
-				?>
-				<option value="<?php echo esc_attr( $cloud['name'] ); ?>" <?php selected( $cloud['name'], $name ); ?>>
-					<?php echo $cloud['name']; ?>
-				</option>
-				<?php
-			endforeach;
-			?>
-			</select>
-			<?php
-		endif;
-		
-		?>
+		<input id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo esc_attr( $title ); ?>" class="widefat">
+		<br/>
 		</p>
+		
+		<p>
+		<label for="<?php echo $this->get_field_id( 'post_type' ); ?>"><?php _e( 'Post Type:' ); ?></label> 
+		<br/>
+		<?php foreach( $all_post_types as $pt ): ?>
+			<?php if( in_array($pt->name, $exclude_post_types) ) continue; ?>
+			<input type="checkbox" name="<?php echo $this->get_field_name( 'post_types' ); ?>[]" value="<?php echo esc_attr( $pt->name ); ?>" <?php echo ( in_array($pt->name, $post_types) ? 'checked' : '' ); ?> />
+			<?php echo $pt->label; ?>
+			<br/>
+		<?php endforeach; ?>
+		</p>
+
+		<p>
+		<label for="<?php echo $this->get_field_id( 'taxonomies' ); ?>"><?php _e( 'Taxonomies:' ); ?></label>
+		<br/>
+		<?php foreach( $all_taxonomies as $tax ): ?>
+			<?php if( in_array($tax->name, $exclude_taxonomies) ) continue; ?>
+			<input type="checkbox" name="<?php echo $this->get_field_name( 'taxonomies' ); ?>[]" value="<?php echo esc_attr( $tax->name ); ?>" <?php echo ( in_array($tax->name, $taxonomies) ? 'checked' : '' ); ?> />
+			<?php echo $tax->label; ?>
+			<br/>
+		<?php endforeach; ?>
+		</p>
+		
+		<p>
+		<label for="<?php echo $this->get_field_id( 'filterby_taxonomy' ); ?>"><?php _e( 'Filter By:' ); ?></label>
+		<br/>
+		<?php foreach( $all_taxonomies as $tax ): ?>
+			<?php if( in_array($tax->name, $exclude_taxonomies) ) continue; ?>
+			<input type="radio" name="<?php echo $this->get_field_name( 'filterby_taxonomy' ); ?>" value="<?php echo esc_attr( $tax->name ); ?>" <?php echo ( $tax->name == $filterby_taxonomy ? 'checked' : '' ); ?> />
+			<?php echo $tax->label; ?>
+			<br/>
+		<?php endforeach; ?>
+		<label for="<?php echo $this->get_field_id( 'filterby_terms' ); ?>"><?php _e( 'Terms:' ); ?></label>
+		<br/>
+		<input type="text" name="<?php echo $this->get_field_name( 'filterby_terms' ); ?>" value="<?php echo esc_attr($filterby_terms); ?>" />
+		</p>
+
+		<p>
+		<label for="<?php echo $this->get_field_id( 'minimum_count' ); ?>"><?php _e( 'Minimum Post Count:' ); ?></label> 
+		<input id="<?php echo $this->get_field_id( 'minimum_count' ); ?>" name="<?php echo $this->get_field_name( 'minimum_count' ); ?>" type="text" value="<?php echo esc_attr( $minimum_count ); ?>">
+		</p>
+		
+		<p>
+		<label for="<?php echo $this->get_field_id( 'maximum_words' ); ?>"><?php _e( 'Maximum Words:' ); ?></label> 
+		<input id="<?php echo $this->get_field_id( 'maximum_words' ); ?>" name="<?php echo $this->get_field_name( 'maximum_words' ); ?>" type="text" value="<?php echo esc_attr( $maximum_words ); ?>">
+		</p>
+
+		<p>
+		<label for="<?php echo $this->get_field_id( 'orientation' ); ?>"><?php _e( 'Words Orientation:' ); ?></label> 
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'orientation' ); ?>" value="horizontal" <?php echo ( $orientation == "horizontal" ? 'checked' : '' ); ?> />
+		Horizontal
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'orientation' ); ?>" value="vertical" <?php echo ( $orientation == "vertical" ? 'checked' : '' ); ?> />
+		Vertical
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'orientation' ); ?>" value="mixed" <?php echo ( $orientation == "mixed" ? 'checked' : '' ); ?> />
+		Mixed Horizontal and Vertical
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'orientation' ); ?>" value="mostly-horizontal" <?php echo ( $orientation == "mostly-horizontal" ? 'checked' : '' ); ?> />
+		Mostly Horizontal
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'orientation' ); ?>" value="mostly-vertical" <?php echo ( $orientation == "mostly-vertical" ? 'checked' : '' ); ?> />
+		Mostly Vertical
+		</p>
+
+		<p>
+		<label for="<?php echo $this->get_field_id( 'font_family' ); ?>"><?php _e( 'Font Family:' ); ?></label> 
+		<input class="widefat" id="<?php echo $this->get_field_id( 'font_family' ); ?>" name="<?php echo $this->get_field_name( 'font_family' ); ?>" type="text" value="<?php echo esc_attr( $font_family ); ?>" class="widefat">
+		</p>
+
+		<p>
+		<label for="<?php echo $this->get_field_id( 'font_size' ); ?>"><?php _e( 'Font Size:' ); ?></label> 
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'font_size_type' ); ?>" value="single" <?php echo ( $font_size_type == "single" ? 'checked' : '' ); ?> />
+			Single: 
+			<input id="<?php echo $this->get_field_id( 'font_size_single' ); ?>" name="<?php echo $this->get_field_name( 'font_size_single' ); ?>" type="text" value="<?php echo esc_attr( $font_size_single ); ?>" class="widefat">
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'font_size_type' ); ?>" value="range" <?php echo ( $font_size_type == "range" ? 'checked' : '' ); ?> />
+			Range: 
+			<input id="<?php echo $this->get_field_id( 'font_size_range' ); ?>[start]" name="<?php echo $this->get_field_name( 'font_size_range' ); ?>[start]" type="text" value="<?php echo esc_attr( $font_size_range['start'] ); ?>" class="widefat">
+			<input id="<?php echo $this->get_field_id( 'font_size_range' ); ?>[end]" name="<?php echo $this->get_field_name( 'font_size_range' ); ?>[end]" type="text" value="<?php echo esc_attr( $font_size_range['end'] ); ?>" class="widefat">
+		</p>		
+
+		<p>
+		<label for="<?php echo $this->get_field_id( 'font_size' ); ?>"><?php _e( 'Font Color:' ); ?></label> 
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'font_color_type' ); ?>" value="none" <?php echo ( $font_color_type == "none" ? 'checked' : '' ); ?> />
+		None
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'font_color_type' ); ?>" value="single" <?php echo ( $font_color_type == "single" ? 'checked' : '' ); ?> />
+		Single:
+			<input id="<?php echo $this->get_field_id( 'font_color_single' ); ?>" name="<?php echo $this->get_field_name( 'font_color_single' ); ?>" type="text" value="<?php echo esc_attr( $font_color_single ); ?>" class="widefat">
+		<br/>
+		<input type="radio" name="<?php echo $this->get_field_name( 'font_color_type' ); ?>" value="spanning" <?php echo ( $font_color_type == "spanning" ? 'checked' : '' ); ?> />
+		Spanning:
+			<input class="widefat" id="<?php echo $this->get_field_id( 'font_color_spanning' ); ?>" name="<?php echo $this->get_field_name( 'font_color_spanning' ); ?>" type="text" value="<?php echo esc_attr( $font_color_spanning ); ?>" class="widefat">
+		</p>
+
+		<p>
+		<label for="<?php echo $this->get_field_id( 'canvas_size' ); ?>"><?php _e( 'Canvas Size:' ); ?></label> 
+		<input id="<?php echo $this->get_field_id( 'canvas_size' ); ?>[width]" name="<?php echo $this->get_field_name( 'canvas_size' ); ?>[width]" type="text" value="<?php echo esc_attr( $canvas_size['width'] ); ?>" class="widefat">
+		<input id="<?php echo $this->get_field_id( 'canvas_size' ); ?>[height]" name="<?php echo $this->get_field_name( 'canvas_size' ); ?>[height]" type="text" value="<?php echo esc_attr( $canvas_size['height'] ); ?>" class="widefat">
+		</p>
+
+		<p>
+		<input type="hidden" name="<?php echo $this->get_field_name( 'hide_debug' ); ?>" value="false" />
+		<input type="checkbox" name="<?php echo $this->get_field_name( 'hide_debug' ); ?>" value="true" <?php checked($hide_debug, 'true'); ?> />
+		Hide Debug Data
+		</p>
+		
 		<?php
 	}
 	
@@ -95,8 +181,133 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 	public function get_default_options()
 	{
 		$defaults = array();
-		$default['name'] = array();
+
+		// title
+		$defaults['title'] = '';
+
+		// post types
+		$defaults['all_post_types'] = get_post_types( array(), 'objects' );
+		$defaults['exclude_post_types'] = array( 'attachment', 'revision', 'nav-menu-item' );
+		$defaults['post_types'] = array('post');
+
+		// taxonomy types
+		$defaults['all_taxonomies'] = get_taxonomies( array(), 'objects' );
+		$defaults['exclude_taxonomies'] = array( 'nav-menu', 'link-category', 'post-format' );
+		$defaults['taxonomies'] = array('post_tag');
+
+		// filter by
+		$defaults['filterby'] = array();
+		$defaults['filterby_taxonomy'] = '';
+		$defaults['filterby_terms'] = '';
+
+		// minimum count
+		$defaults['minimum_count'] = 1;
+
+		// max words (# or none)
+		$defaults['maximum_words'] = 250;
+		
+		// words orientation
+		$defaults['orientation'] = 'horizontal';
+
+		// font_family
+		$defaults['font_family'] = 'Arial';
+
+		// font-size (range or single)
+		$defaults['font_size_type'] = 'range';
+		$defaults['font_size_range'] = array('start' => 10, 'end' => 100);
+		$defaults['font_size_single'] = 60;
+
+		// color (spanning, single color, none)
+		$defaults['font_color_type'] = 'none';
+		$defaults['font_color_single'] = '';
+		$defaults['font_color_spanning'] = '';
+
+		// canvas size (height and width)
+		$defaults['canvas_size'] = array('width' => 960, 'height' => 420);
+		
+		$defaults['hide_debug'] = 'true';
+		
 		return $defaults;
+	}
+	
+	
+	/**
+	 * Process options from the database or shortcode.
+	 * Designed to convert options from strings or sanitize output.
+	 * @param   array   $options  The current settings for the widget or shortcode.
+	 * @return  array   The processed settings.
+	 */
+	public function process_options( $options )
+	{
+		if( !empty($options['filterby_taxonomy']) )
+		{
+			$options['filterby'] = array(
+				array(
+					'taxonomy' 	=> $options['filterby_taxonomy'],
+					'terms' 	=> $options['filterby_terms'],
+					'field' 	=> 'slug',
+				)
+			);
+		}
+
+		if( array_key_exists('filterby', $options) && is_string($options['filterby']) )
+		{
+			$options['filterby'] = explode( ';', $options['filterby'] );
+		}
+
+		if( array_key_exists('filterby', $options) && is_array($options['filterby']) )
+		{
+			foreach( $options['filterby'] as &$filterby )
+			{
+				if( is_array($filterby) ) continue;
+
+				$filterby_parts = explode( ':', $filterby );
+				if( count($filterby_parts) < 2 )
+				{
+					unset($filterby);
+					continue;
+				}
+				$filterby = array(
+					'taxonomy'	=> $filterby_parts[0],
+					'terms'    	=> explode( ',', $filterby_parts[1] ),
+					'field'    	=> 'slug',
+				);
+			}
+		}
+
+		if( $this->control_type == 'widget' ) return $options;
+		
+		foreach( $options as $k => &$v )
+		{
+			if( is_string($v) ) $v = trim( $v );
+		}
+		
+		if( array_key_exists('post_types', $options) && is_string($options['post_types']) ) 
+			$options['post_types'] = explode( ',', $options['post_types'] );
+		
+		if( array_key_exists('taxonomies', $options) && is_string($options['taxonomies']) ) 
+			$options['taxonomies'] = explode( ',', $options['taxonomies'] );
+		
+		if( array_key_exists('minimum_count', $options) && is_int($options['minimum_count']) )
+			$options['minimum_count'] = intval( $options['minimum_count'] );
+		
+		if( array_key_exists('maximum_words', $options) && is_int($options['maximum_words']) )
+			$options['maximum_words'] = intval( $options['maximum_words'] );
+		
+		if( array_key_exists('font_size', $options) )		
+			$options['font_size_type'] = 'custom';
+
+		if( array_key_exists('font_color', $options) )		
+			$options['font_color_type'] = 'custom';
+
+		if( array_key_exists('canvas_size', $options) && is_string($options['canvas_size']) )
+		{
+			$value = explode( ",", $options['canvas_size'] );
+			if( count($value) >= 2 )
+				$options['canvas_size'] = array( 'width' => $value[0], 'height' => $value[1] );
+		}
+		
+		return $options;
 	}
 	
 	
@@ -107,54 +318,88 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 	 */
 	public function print_control( $options, $args = null )
 	{
-		$options = $this->merge_options( $options );
 		extract( $options );
 		
-		if( empty( $name ) ) {
-			return;
-		}
-		
-		$model = D3WordCloudWidget_Model::get_instance();
-		
-		$cloud = $model->get_cloud( $name );
-		if( ! $cloud ) {
-			return;
-		}
-		
-		$cache = $model->get_cache( $name, true );
-		if( ! $cache ) {
-			return;
-		}
-		
-		extract( $cloud );
-		
-		
-		$terms = array();
-		foreach( $cache['terms'] as $term_id => $term_count )
+		if( !empty($filterby) )
 		{
-			$term_object = get_term_by( 'term_taxonomy_id', $term_id );
-			$terms[] = array(
-				'name' => $term_object->name,
-				'count' => $term_count,
-				'url' => get_term_link( $term_id ),
+			$allterms = array();
+
+			$filterby['relation'] = 'AND';
+			$q = new WP_Query(
+				array(
+					'post_type' => $post_types,
+					'tax_query' => $filterby,
+					'posts_per_page' => -1,
+				)
+			);
+
+			while( $q->have_posts() )
+			{
+				$q->the_post();
+				$post_terms = array();
+				foreach( $taxonomies as $tax )
+				{
+					$t = get_the_terms( get_the_ID(), $tax );
+					if( is_array($t) )
+						$post_terms = array_merge( $post_terms, $t );
+				}
+
+				$allterms = array_merge( $allterms, $post_terms );
+			}
+
+			wp_reset_postdata();
+
+			$terms = array();
+			foreach( $allterms as $term )
+			{
+				if( !array_key_exists($term->name, $terms) )
+					$terms[$term->name] = $term;
+			}
+			$allterms = null;
+		}
+		else
+		{
+			$terms = get_terms(
+				$taxonomies, 
+				array( 
+					'orderby'	=> 'count', 
+					'order'		=> 'DESC', 
+					'number'	=> intval($maximum_words),
+				)
 			);
 		}
-
-		echo $args['before_widget'];
-		echo '<div id="d3-word-cloud-control-' . self::$index . '" class="wscontrol d3-word-cloud-control">';
 		
-		if( ! empty( $title ) )
+		$tags = array();
+		if( $terms && !is_wp_error($terms) )
+		{
+			foreach( $terms as $term )
+			{
+				if( $term->count >= intval($minimum_count) )
+				{
+					$tags[] = array(
+						'name'	=> $term->name,
+						'count'	=> $term->count,
+						'url'	=> get_term_link( $term ),
+					);
+				}
+			}
+		}
+		
+		echo $args['before_widget'];
+		echo '<div id="d3-word-cloud-control-'.self::$index.'" class="wscontrol d3-word-cloud-control">';
+		
+		if( !empty($title) )
 		{
 			echo $args['before_title'] . $title . $args['after_title'];
 		}
 		
-		echo '<input type="hidden" class="orientation" value="' . esc_attr( $orientation ) . '" />';
-		echo '<input type="hidden" class="font-family" value="' . esc_attr( $font_family ) . '" />';
+		echo '<input type="hidden" class="orientation" value="'.esc_attr($orientation).'" />';
+		echo '<input type="hidden" class="font-family" value="'.esc_attr($font_family).'" />';
 		
 		switch( $font_size_type )
 		{
 			case( "range" ):
-				$font_size = $font_size_range['start'] . ',' . $font_size_range['end'];
+				$font_size = $font_size_range['start'].','.$font_size_range['end'];
 				break;
 				
 			case( "custom" ):
@@ -164,9 +409,10 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 			default:
 				$font_size = $font_size_single;
 				break;
+
 		}
 		
-		echo '<input type="hidden" class="font-size" value="' . esc_attr( $font_size ) . '" />';
+		echo '<input type="hidden" class="font-size" value="'.esc_attr($font_size).'" />';
 		
 		switch( $font_color_type )
 		{
@@ -187,13 +433,13 @@ class D3WordCloud_WidgetShortcodeControl extends WidgetShortcodeControl
 				break;
 		}
 		
-		echo '<input type="hidden" class="font-color" value="' . esc_attr( $font_color ) . '" />';
-		echo '<input type="hidden" class="tags" value="' . esc_attr( json_encode( $terms ) ) . '" />';
-		echo '<input type="hidden" class="hide-debug" value="' . esc_attr( $hide_debug ) . '" />';
-		echo '<svg width="' . $canvas_size['width'] . '" height="' . $canvas_size['height'] . '"></svg>';
+		echo '<input type="hidden" class="font-color" value="'.esc_attr($font_color).'" />';
+		echo '<input type="hidden" class="tags" value="'.esc_attr(json_encode($tags)).'" />';
+		echo '<input type="hidden" class="hide-debug" value="'.esc_attr($hide_debug).'" />';
+		echo '<svg width="'.$canvas_size['width'].'" height="'.$canvas_size['height'].'"></svg>';
 		
 		echo '</div>';
-		echo $args['after_widget'];
+		echo $args['after_widget'];		
 	}
 }
 endif;
