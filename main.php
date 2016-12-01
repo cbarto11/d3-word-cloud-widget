@@ -3,7 +3,7 @@
 Plugin Name: D3 Word Cloud
 Plugin URI: https://github.com/atrus1701/d3-word-cloud-widget
 Description: Displays a word cloud of terms using D3.js.
-Version: 1.1.0
+Version: 1.1.1
 Author: Crystal Barton
 Author URI: https://www.linkedin.com/in/crystalbarton
 */
