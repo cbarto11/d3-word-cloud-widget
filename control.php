@@ -1,7 +1,5 @@
 <?php
 
-require_once( __DIR__.'/widget-shortcode-control.php' );
-
 /**
  * The D3WordCloud_WidgetShortcodeControl class for the "D3 Word Cloud" plugin.
  * Derived from the official WP RSS widget.
